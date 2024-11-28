@@ -1,0 +1,11 @@
+.container {
+    background-color: #4c8ded;
+    font-family: "Gill Sans", "Segoe UI", Arial, sans-serif;
+    color: white;
+    text-align: center;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
