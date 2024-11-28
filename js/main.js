@@ -68,16 +68,27 @@ function atualizarCidades() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const titles = document.querySelectorAll('[data-toggle]');
-    
-    titles.forEach(title => {
-        title.addEventListener('click', () => {
-            const parent = title.parentElement; 
-            const content = parent.querySelector('.conteudo');
+const togglePaciente = document.getElementById('togglePaciente');
+const conteudoPaciente = document.getElementById('conteudoPaciente');
 
-            if (content) {
-                content.classList.toggle('ativo'); 
+togglePaciente.addEventListener('click', () => {
+    if (conteudoPaciente.style.display === 'none' || conteudoPaciente.style.display === '') {
+        conteudoPaciente.style.display = 'block';
+    } else {
+        conteudoPaciente.style.display = 'none';
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const toggleSections = document.querySelectorAll(".toggle-section");
+
+    toggleSections.forEach(section => {
+        section.addEventListener("click", function () {
+            const content = this.nextElementSibling; 
+            if (content.classList.contains("mostrar")) {
+                content.classList.remove("mostrar");
+            } else {
+                content.classList.add("mostrar");
             }
         });
     });

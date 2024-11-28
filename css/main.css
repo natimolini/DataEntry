@@ -15,6 +15,7 @@ body {
     background-color: #0b5ed8;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 }
 
 .medico,
@@ -30,6 +31,15 @@ body {
     background-color: #0b5ed8;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.conteudo {
+    display: none;
+}
+
+.conteudo.mostrar {
+    display: block;
 }
 
 .title {
@@ -51,8 +61,8 @@ body {
 }
 
 .adicionar {
-    background-color: #fff;
-    color: #0b5ed8;
+    background-color: #D9EFFF;
+    color: #4c8ded;
     border: none;
     width: 150px;
     height: 50px;
@@ -65,8 +75,9 @@ body {
 }
 
 .adicionar:hover {
-    background-color: #082a55;
-    color: #fff;
+    background-color: #4c8ded;
+    color: #D9EFFF;
+    border: 2px solid #D9EFFF;
 
 }
 
@@ -85,7 +96,7 @@ body {
 }
 
 .input-padrao {
-    flex: 1;
+    width: 85.5%;
     padding: 8px;
     border: 1px solid #d9e0ee;
     border-radius: 8px;
@@ -219,4 +230,24 @@ select.input-info {
     font-size: 14px;
     resize: vertical;
     overflow-y: auto;
+}
+
+.mais{
+    width: 40px;
+    height: 25px;
+    font-family: "Gill Sans", "Segoe UI", Arial, sans-serif;
+    background-color: #0b5ed8;
+    color: white;
+    border: none;
+    margin-top: 5px;
+    font-size: 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.mais:hover {
+    background-color: #D9EFFF;
+    color: #0b5ed8;
+    border: 2px solid #0b5ed8;
 }

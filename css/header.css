@@ -7,15 +7,13 @@ body {
     position: fixed;
     top: 0;
     align-self: center;
-    width: 95%;
+    width: 97%;
     background-color: #f9f9f9;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 10px 30px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    margin-left: 2px;
-    margin-left: 2px;
 }
 
 .header img {

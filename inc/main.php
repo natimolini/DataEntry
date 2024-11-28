@@ -13,8 +13,8 @@
 <body>
     <?php include("header.php") ?>
     <div class="paciente">
-        <h2 class="title" data-toggle="paciente">Paciente</h2>
-        <div class="conteudo">
+        <h2 class="title" id="togglePaciente">Paciente</h2>
+        <div class="conteudo" id="conteudoPaciente">
             <div class="localizarPaciente bloco-pequeno">
                 <p class="titulo-loc">Localizar</p>
                 <form class="search-container" action="" method="get">
@@ -111,13 +111,9 @@
             </button>
         </div>
     </div>
-    </div>
     <?php include("../inc/mainMedico.php") ?>
     <?php include("../inc/mainReq.php") ?>
     <?php include("../inc/pagamento.php") ?>
-    <button type="submit" class="salvar">
-        Salvar
-    </button>
     <?php include("../inc/footer.php") ?>
     <script src="../js/main.js"></script>
 </body>
