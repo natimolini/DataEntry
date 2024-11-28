@@ -1,0 +1,59 @@
+body {
+    margin: 0;
+    font-family: "Gill Sans", "Segoe UI", Arial, sans-serif;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    align-self: center;
+    width: 95%;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-left: 2px;
+    margin-left: 2px;
+}
+
+.header img {
+    height: 40px;
+    width: auto;
+}
+
+.progress-container {
+    flex: 1;
+    margin: 0 20px;
+    height: 8px;
+    background: #D9EFFF;
+    border-radius: 5px;
+    position: relative;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #0b5ed8;
+    width: 0%;
+    border-radius: 5px;
+}
+
+.sair {
+    width: 80px;
+    height: 35px;
+    font-family: "Gill Sans", "Segoe UI", Arial, sans-serif;
+    background-color: #0b5ed8;
+    color: white;
+    border: none;
+    font-size: 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sair:hover {
+    background-color: #D9EFFF;
+    color: #0b5ed8;
+    border: 2px solid #0b5ed8;
+}
