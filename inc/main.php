@@ -1,3 +1,51 @@
+<?php
+include('../dbconnection/functions.php');
+
+$dadosPaciente = null;
+
+if (isset($_GET['cpf']) && !empty($_GET['cpf'])) {
+    $cpf = preg_replace('/\D/', '', $_GET['cpf']);
+
+    $aCampos = "
+        P.CD_PESSOA_FISICA,
+        P.NM_PESSOA_FISICA,
+        LISTAGG(C.NM_CONTATO, ', ') WITHIN GROUP (ORDER BY C.NM_CONTATO) AS NM_CONTATOS,
+        CEP.DS_UF, 
+        P.NR_CPF,
+        P.DT_NASCIMENTO,
+        TRUNC((MONTHS_BETWEEN(SYSDATE, P.DT_NASCIMENTO)) / 12) AS IDADE,
+        MAX(CEP.NM_LOCALIDADE) AS NM_LOCALIDADE
+    ";
+
+    $tabela = "
+        PESSOA_FISICA P
+        LEFT JOIN COMPL_PESSOA_FISICA C ON P.CD_PESSOA_FISICA = C.CD_PESSOA_FISICA
+        LEFT JOIN CEP_LOC CEP ON P.NR_CEP_CIDADE_NASC = CEP.CD_CEP
+    ";
+
+    $where = "WHERE P.NR_CPF = :cpf";
+    $extras = "
+        GROUP BY
+            P.CD_PESSOA_FISICA,
+            P.NM_PESSOA_FISICA,
+            CEP.DS_UF, 
+            P.NR_CPF,
+            P.DT_NASCIMENTO,
+            P.NR_CEP_CIDADE_NASC
+    ";
+
+    try {
+        $query = "SELECT $aCampos FROM $tabela $where $extras";
+        $stmt = $conn->prepare($query);
+        $stmt->bindParam(':cpf', $cpf);
+        $stmt->execute();
+        $dadosPaciente = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Erro ao buscar paciente: " . $e->getMessage();
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -17,10 +65,11 @@
         <div class="conteudo" id="conteudoPaciente">
             <div class="localizarPaciente bloco-pequeno">
                 <p class="titulo-loc">Localizar</p>
-                <form class="search-container" action="" method="get">
-                    <input id="searchBar" class="input-padrao" placeholder="Digite o CPF do paciente: 000.000.000-00">
+                <form class="search-container" action="main.php" method="get">
+                    <input id="searchBar" class="input-padrao" name="cpf" placeholder="Digite o CPF do paciente: 000.000.000-00">
                     <button class="search-button" type="submit">OK</button>
                 </form>
+
                 <table class="tabela-padrao">
                     <thead>
                         <tr>
@@ -31,13 +80,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Teste1</td>
-                            <td>13</td>
-                            <td>19/07/2005</td>
-                            <td>Teste</td>
-                        </tr>
+                        <?php if ($dadosPaciente): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($dadosPaciente['NM_PESSOA_FISICA']) ?></td>
+                                <td><?= htmlspecialchars($dadosPaciente['IDADE']) ?></td>
+                                <td><?= htmlspecialchars(date('d/m/Y', strtotime($dadosPaciente['DT_NASCIMENTO']))) ?></td>
+                                <td><?= htmlspecialchars($dadosPaciente['NM_CONTATOS'] ?: 'N/A') ?></td>
+                            </tr>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4">Nenhum paciente encontrado</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
+
                 </table>
             </div>
 
@@ -45,67 +101,32 @@
                 <p class="titulo-info">Informações</p>
                 <form class="info-container" action="">
                     <label for="codigoPaciente" class="tituloInfo">Código:</label>
-                    <input type="number" id="codigoPaciente" name="codigoPaciente" class="input-info" placeholder="Código do paciente" required><br>
+                    <input type="number" id="codigoPaciente" name="codigoPaciente" class="input-info"
+                        value="<?= htmlspecialchars($dadosPaciente['CD_PESSOA_FISICA'] ?? '') ?>" readonly><br>
 
                     <label for="nomePaciente" class="tituloInfo">Nome:</label>
-                    <input type="text" id="nomePaciente" name="nomePaciente" class="input-info" placeholder="Nome do paciente" required><br>
+                    <input type="text" id="nomePaciente" name="nomePaciente" class="input-info"
+                        value="<?= htmlspecialchars($dadosPaciente['NM_PESSOA_FISICA'] ?? '') ?>" readonly><br>
 
                     <label for="nomeMaePaciente" class="tituloInfo">Filiação:</label>
-                    <input type="text" id="nomeMaePaciente" name="nomeMaePaciente" class="input-info" placeholder="Nome da filiação do paciente" required>
+                    <input type="text" id="nomeMaePaciente" name="nomeMaePaciente" class="input-info"
+                        value="<?= htmlspecialchars($dadosPaciente['NM_CONTATOS'] ?? '') ?>" readonly>
 
-                    <label class="tituloInfo">Sexo:</label>
-                    <div class="sexo-opcoes">
-                        <input type="radio" id="fem" name="sexoPaciente" value="Feminino" required>
-                        <label class="labelsexo" for="fem">Feminino</label>
-
-                        <input type="radio" id="masc" name="sexoPaciente" value="Masculino" required>
-                        <label class="labelsexo" for="masc">Masculino</label>
-
-                        <input type="radio" id="outro" name="sexoPaciente" value="Outro" required>
-                        <label class="labelsexo" for="outro">Outro</label>
-                    </div>
-
-                    <label for="nascPaciente" class="tituloInfo">Nascimento:</label>
-                    <input type="date" id="nascPaciente" name="nascPaciente" class="input-info" required><br>
+                    <label for="nascPaciente" class="tituloInfo nascimento">Nascimento:</label>
+                    <input type="date" id="nascPaciente" name="nascPaciente" class="input-info"
+                        value="<?= $dadosPaciente['DT_NASCIMENTO'] ? date('Y-m-d', strtotime($dadosPaciente['DT_NASCIMENTO'])) : '' ?>" readonly><br>
 
                     <label for="estado" class="tituloInfo">Estado:</label>
-                    <select class="input-info" id="estado" name="estado" required onchange="atualizarCidades()">
-                        <option value="">Selecione o estado</option>
-                        <option value="AC">Acre</option>
-                        <option value="AL">Alagoas</option>
-                        <option value="AP">Amapá</option>
-                        <option value="AM">Amazonas</option>
-                        <option value="BA">Bahia</option>
-                        <option value="CE">Ceará</option>
-                        <option value="DF">Distrito Federal</option>
-                        <option value="ES">Espírito Santo</option>
-                        <option value="GO">Goiás</option>
-                        <option value="MA">Maranhão</option>
-                        <option value="MT">Mato Grosso</option>
-                        <option value="MS">Mato Grosso do Sul</option>
-                        <option value="MG">Minas Gerais</option>
-                        <option value="PA">Pará</option>
-                        <option value="PB">Paraíba</option>
-                        <option value="PR">Paraná</option>
-                        <option value="PE">Pernambuco</option>
-                        <option value="PI">Piauí</option>
-                        <option value="RJ">Rio de Janeiro</option>
-                        <option value="RN">Rio Grande do Norte</option>
-                        <option value="RS">Rio Grande do Sul</option>
-                        <option value="RO">Rondônia</option>
-                        <option value="RR">Roraima</option>
-                        <option value="SC">Santa Catarina</option>
-                        <option value="SP">São Paulo</option>
-                        <option value="SE">Sergipe</option>
-                        <option value="TO">Tocantins</option>
-                    </select><br>
+                    <input type="text" id="estado" name="estado" class="input-info"
+                        value="<?= htmlspecialchars($dadosPaciente['DS_UF'] ?? '') ?>" readonly><br>
 
-                    <label class="tituloInfo" for="cidade">Cidade:</label>
-                    <select class="input-info" id="cidade" name="cidade" required>
-                        <option value="">Selecione a cidade</option>
-                    </select>
+                    <label for="cidade" class="tituloInfo">Cidade:</label>
+                    <input type="text" id="cidade" name="cidade" class="input-info"
+                        value="<?= htmlspecialchars($dadosPaciente['NM_LOCALIDADE'] ?? '') ?>" readonly><br>
+
                 </form>
             </div>
+
             <button type="submit" class="adicionar">
                 Salvar
             </button>
@@ -115,7 +136,6 @@
     <?php include("../inc/mainReq.php") ?>
     <?php include("../inc/pagamento.php") ?>
     <?php include("../inc/footer.php") ?>
-    <script src="../js/main.js"></script>
 </body>
 
 </html>
