@@ -1,7 +1,7 @@
 <?php
 require_once 'functions.php';
 
-$id = 1; 
+$id = 1;
 $registro = buscarPorId('PESSOA_FISICA', $id);
 
 echo "<h3>Registro com ID $id na Tabela pessoa_fisica:</h3>";

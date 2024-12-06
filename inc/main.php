@@ -19,7 +19,7 @@
                 <p class="titulo-loc">Localizar</p>
                 <form class="search-container" action="" method="get">
                     <input id="searchBar" class="input-padrao" placeholder="Digite o CPF do paciente: 000.000.000-00">
-                    <button class="search-button" type="submit">Pesquisar</button>
+                    <button class="search-button" type="submit">OK</button>
                 </form>
                 <table class="tabela-padrao">
                     <thead>

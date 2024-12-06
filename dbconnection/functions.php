@@ -15,4 +15,3 @@ function buscarPorId($tabela, $id)
         throw new Exception("Erro ao executar a consulta");
     }
 }
-

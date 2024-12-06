@@ -5,7 +5,7 @@
             <div class="localizarPaciente bloco-pequeno">
                 <form class="search-container" action="" method="get">
 
-                    <input id="valor" class="input-padrao" placeholder="Digite o valor: R$ 0,00">
+                    <input id="valor" class="input-padraoA" placeholder="Digite o valor: R$ 0,00">
                 </form>
                 <table class="tabela-padrao">
                     <thead>

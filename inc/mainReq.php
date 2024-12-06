@@ -58,7 +58,7 @@
                 <p class="titulo-info">Exames</p>
                 <form class="search-container" action="" method="get">
                     <input id="searchBar" class="input-padrao" placeholder="Digite o nome ou código do exame">
-                    <button class="search-button" type="submit">Pesquisar</button>
+                    <button class="search-button" type="submit">Adicionar</button>
                 </form>
                 <table class="tabela-padrao">
                     <thead>
@@ -74,9 +74,6 @@
                         </tr>
                     </tbody>
                 </table>
-                <button type="button" class="mais">
-                    +
-                </button>
             </div>
             <button type="submit" class="adicionar">
                 Salvar

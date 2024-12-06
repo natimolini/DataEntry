@@ -5,8 +5,8 @@
             <div class="bloco-pequeno">
                 <p class="titulo-loc">Localizar</p>
                 <form class="search-container" action="" method="get">
-                    <input type="search" id="searchBar" class="input-padrao" placeholder="Digite o CRM do médico">
-                    <button class="search-button btn-padrao" type="submit">Pesquisar</button>
+                    <input type="search" id="searchBar" class="input-padrao" placeholder="Digite o CRM ou nome do médico">
+                    <button class="search-button btn-padrao" type="submit">OK</button>
                 </form>
                 <table class="tabela-padrao">
                     <thead>
