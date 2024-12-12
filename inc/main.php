@@ -1,51 +1,22 @@
 <?php
-include('../dbconnection/functions.php');
+
+include('../dbconnection/connection.php');
+include('../databasePaciente/selecionarPaciente.php');
+include('../databasePaciente/atualizarPaciente.php');
+
+date_default_timezone_set('America/Sao_Paulo');
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $resultado = atualizarPaciente($_POST, $conn);
+}
 
 $dadosPaciente = null;
-
 if (isset($_GET['cpf']) && !empty($_GET['cpf'])) {
-    $cpf = preg_replace('/\D/', '', $_GET['cpf']);
-
-    $aCampos = "
-        P.CD_PESSOA_FISICA,
-        P.NM_PESSOA_FISICA,
-        LISTAGG(C.NM_CONTATO, ', ') WITHIN GROUP (ORDER BY C.NM_CONTATO) AS NM_CONTATOS,
-        CEP.DS_UF, 
-        P.NR_CPF,
-        P.DT_NASCIMENTO,
-        TRUNC((MONTHS_BETWEEN(SYSDATE, P.DT_NASCIMENTO)) / 12) AS IDADE,
-        MAX(CEP.NM_LOCALIDADE) AS NM_LOCALIDADE
-    ";
-
-    $tabela = "
-        PESSOA_FISICA P
-        LEFT JOIN COMPL_PESSOA_FISICA C ON P.CD_PESSOA_FISICA = C.CD_PESSOA_FISICA
-        LEFT JOIN CEP_LOC CEP ON P.NR_CEP_CIDADE_NASC = CEP.CD_CEP
-    ";
-
-    $where = "WHERE P.NR_CPF = :cpf";
-    $extras = "
-        GROUP BY
-            P.CD_PESSOA_FISICA,
-            P.NM_PESSOA_FISICA,
-            CEP.DS_UF, 
-            P.NR_CPF,
-            P.DT_NASCIMENTO,
-            P.NR_CEP_CIDADE_NASC
-    ";
-
-    try {
-        $query = "SELECT $aCampos FROM $tabela $where $extras";
-        $stmt = $conn->prepare($query);
-        $stmt->bindParam(':cpf', $cpf);
-        $stmt->execute();
-        $dadosPaciente = $stmt->fetch(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "Erro ao buscar paciente: " . $e->getMessage();
-    }
+    $dadosPaciente = buscarDadosPacientePorCPF($_GET['cpf'], $conn);
 }
-?>
 
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -66,7 +37,7 @@ if (isset($_GET['cpf']) && !empty($_GET['cpf'])) {
             <div class="localizarPaciente bloco-pequeno">
                 <p class="titulo-loc">Localizar</p>
                 <form class="search-container" action="main.php" method="get">
-                    <input id="searchBar" class="input-padrao" name="cpf" placeholder="Digite o CPF do paciente: 000.000.000-00">
+                    <input id="searchBar" class="input-padraoB" name="cpf" placeholder="Digite o CPF do paciente: 000.000.000-00">
                     <button class="search-button" type="submit">OK</button>
                 </form>
 
@@ -82,10 +53,10 @@ if (isset($_GET['cpf']) && !empty($_GET['cpf'])) {
                     <tbody>
                         <?php if ($dadosPaciente): ?>
                             <tr>
-                                <td><?= htmlspecialchars($dadosPaciente['NM_PESSOA_FISICA']) ?></td>
-                                <td><?= htmlspecialchars($dadosPaciente['IDADE']) ?></td>
-                                <td><?= htmlspecialchars(date('d/m/Y', strtotime($dadosPaciente['DT_NASCIMENTO']))) ?></td>
-                                <td><?= htmlspecialchars($dadosPaciente['NM_CONTATOS'] ?: 'N/A') ?></td>
+                                <td><?= htmlspecialchars($dadosPaciente['NM_PESSOA_FISICA'] ?? 'N/A') ?></td>
+                                <td><?= htmlspecialchars($dadosPaciente['IDADE'] ?? 'N/A') ?></td>
+                                <td><?= htmlspecialchars(isset($dadosPaciente['DT_NASCIMENTO']) ? date('d/m/Y', strtotime($dadosPaciente['DT_NASCIMENTO'])) : 'N/A') ?></td>
+                                <td><?= htmlspecialchars($dadosPaciente['NM_CONTATO'] ?? 'N/A') ?></td>
                             </tr>
                         <?php else: ?>
                             <tr>
@@ -93,49 +64,52 @@ if (isset($_GET['cpf']) && !empty($_GET['cpf'])) {
                             </tr>
                         <?php endif; ?>
                     </tbody>
-
                 </table>
             </div>
 
             <div class="infoPaciente bloco-pequeno">
                 <p class="titulo-info">Informações</p>
-                <form class="info-container" action="">
-                    <label for="codigoPaciente" class="tituloInfo">Código:</label>
-                    <input type="number" id="codigoPaciente" name="codigoPaciente" class="input-info"
-                        value="<?= htmlspecialchars($dadosPaciente['CD_PESSOA_FISICA'] ?? '') ?>" readonly><br>
+                <form class="info-container" action="main.php" method="post">
+                    <input type="hidden" name="codigoPaciente" value="<?= htmlspecialchars($dadosPaciente['CD_PESSOA_FISICA'] ?? '') ?>">
+
+                    <label for="cpfpaciente" class="tituloInfo">CPF:</label>
+                    <input type="text" id="cpfPaciente" name="cpfpaciente" class="input-info"
+                        value="<?= htmlspecialchars($dadosPaciente['NR_CPF'] ?? '') ?>"
+                        <?= $dadosPaciente ? 'readonly' : '' ?> required><br>
 
                     <label for="nomePaciente" class="tituloInfo">Nome:</label>
                     <input type="text" id="nomePaciente" name="nomePaciente" class="input-info"
-                        value="<?= htmlspecialchars($dadosPaciente['NM_PESSOA_FISICA'] ?? '') ?>" readonly><br>
+                        value="<?= htmlspecialchars($dadosPaciente['NM_PESSOA_FISICA'] ?? '') ?>" required><br>
 
-                    <label for="nomeMaePaciente" class="tituloInfo">Filiação:</label>
-                    <input type="text" id="nomeMaePaciente" name="nomeMaePaciente" class="input-info"
-                        value="<?= htmlspecialchars($dadosPaciente['NM_CONTATOS'] ?? '') ?>" readonly>
+                    <label for="nomeMaePaciente1" class="tituloInfo">Filiação 1:</label>
+                    <input type="text" id="nomeMaePaciente1" name="nomeMaePaciente1" class="input-info"
+                        value="<?= htmlspecialchars($dadosPaciente['NM_CONTATO1'] ?? '') ?>" required><br>
+
+                    <label for="nomeMaePaciente2" class="tituloInfo">Filiação 2:</label>
+                    <input type="text" id="nomeMaePaciente2" name="nomeMaePaciente2" class="input-info"
+                        value="<?= htmlspecialchars($dadosPaciente['NM_CONTATO2'] ?? '') ?>"><br>
+
+                    <label for="sexo" class="tituloInfo">Sexo:</label>
+                    <select id="sexo" name="sexo" class="input-info" required>
+                        <option value="M" <?= ($dadosPaciente['SEXO'] ?? '') === 'Masculino' ? 'selected' : '' ?>>Masculino</option>
+                        <option value="F" <?= ($dadosPaciente['SEXO'] ?? '') === 'Feminino' ? 'selected' : '' ?>>Feminino</option>
+                        <option value="O" <?= ($dadosPaciente['SEXO'] ?? '') === 'Outro' ? 'selected' : '' ?>>Outro</option>
+                    </select><br>
 
                     <label for="nascPaciente" class="tituloInfo nascimento">Nascimento:</label>
-                    <input type="date" id="nascPaciente" name="nascPaciente" class="input-info"
-                        value="<?= $dadosPaciente['DT_NASCIMENTO'] ? date('Y-m-d', strtotime($dadosPaciente['DT_NASCIMENTO'])) : '' ?>" readonly><br>
+                    <input type="text" id="nascPaciente" name="nascPaciente" class="input-info"
+                        value="<?= isset($dadosPaciente['DT_NASCIMENTO']) ? date('d/m/Y', strtotime($dadosPaciente['DT_NASCIMENTO'])) : '' ?>" required><br>
 
-                    <label for="estado" class="tituloInfo">Estado:</label>
-                    <input type="text" id="estado" name="estado" class="input-info"
-                        value="<?= htmlspecialchars($dadosPaciente['DS_UF'] ?? '') ?>" readonly><br>
-
-                    <label for="cidade" class="tituloInfo">Cidade:</label>
-                    <input type="text" id="cidade" name="cidade" class="input-info"
-                        value="<?= htmlspecialchars($dadosPaciente['NM_LOCALIDADE'] ?? '') ?>" readonly><br>
-
+                    <button type="submit" class="adicionar">Salvar</button>
                 </form>
             </div>
-
-            <button type="submit" class="adicionar">
-                Salvar
-            </button>
         </div>
     </div>
     <?php include("../inc/mainMedico.php") ?>
     <?php include("../inc/mainReq.php") ?>
     <?php include("../inc/pagamento.php") ?>
     <?php include("../inc/footer.php") ?>
+    <script src='../js/main.js'></script>
 </body>
 
 </html>

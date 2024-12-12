@@ -1,24 +1,23 @@
 SELECT
-    p.cd_pessoa_fisica,
-    p.nm_pessoa_fisica,
-    LISTAGG(c.nm_contato, ', ') WITHIN GROUP (ORDER BY c.nm_contato) AS nm_contatos,
-    cep.ds_uf, 
-    p.nr_cpf,
-    p.dt_nascimento,
-    TRUNC((MONTHS_BETWEEN(SYSDATE, p.dt_nascimento)) / 12) AS idade,
-    MAX(cep.nm_localidade) AS nm_localidade
+    P.CD_PESSOA_FISICA,
+    P.NM_PESSOA_FISICA,
+    LISTAGG(C.NM_CONTATO, ', ') WITHIN GROUP (ORDER BY C.NM_CONTATO) AS NM_CONTATOS,
+    P.NR_CPF,
+    P.DT_NASCIMENTO,
+    TRUNC((MONTHS_BETWEEN(SYSDATE, P.DT_NASCIMENTO)) / 12)           AS IDADE,
+    P.IE_SEXO,
+    P.NR_CEP_CIDADE_NASC
 FROM
-    pessoa_fisica p
-LEFT JOIN
-    compl_pessoa_fisica c ON p.cd_pessoa_fisica = c.cd_pessoa_fisica
-LEFT JOIN
-    cep_loc cep ON p.nr_cep_cidade_nasc = cep.cd_cep
+    PESSOA_FISICA       P
+    LEFT JOIN COMPL_PESSOA_FISICA C
+    ON P.CD_PESSOA_FISICA = C.CD_PESSOA_FISICA
 WHERE
-    p.nr_cpf IS NOT NULL
+    P.NR_CPF IS NOT NULL
 GROUP BY
-    p.cd_pessoa_fisica,
-    p.nm_pessoa_fisica,
-    cep.ds_uf, 
-    p.nr_cpf,
-    p.dt_nascimento,
-    p.nr_cep_cidade_nasc
+    P.CD_PESSOA_FISICA,
+    P.NM_PESSOA_FISICA,
+    CEP.DS_UF,
+    P.NR_CPF,
+    P.DT_NASCIMENTO,
+    P.NR_CEP_CIDADE_NASC,
+    P.IE_SEXO

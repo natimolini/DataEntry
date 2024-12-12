@@ -7,7 +7,7 @@ body {
 .paciente {
     max-width: 800px;
     margin: 0 auto;
-    margin-top: 100px;
+    margin-top: 80px;
     margin-bottom: 20px;
     padding: 20px;
     padding-right: 25px;
@@ -61,8 +61,8 @@ body {
 }
 
 .adicionar {
-    background-color: #D9EFFF;
-    color: #4c8ded;
+    background-color: #0b5ed8;
+    color: white;
     border: none;
     width: 150px;
     height: 50px;
@@ -75,9 +75,9 @@ body {
 }
 
 .adicionar:hover {
-    background-color: #4c8ded;
-    color: #D9EFFF;
-    border: 2px solid #D9EFFF;
+    background-color: #D9EFFF;
+    color: #0b5ed8;
+    border: 2px solid #0b5ed8;
 
 }
 
@@ -105,6 +105,14 @@ body {
 
 .input-padraoA {
     width: 100%;
+    padding: 8px;
+    border: 1px solid #d9e0ee;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.input-padraoB {
+    width: 95%;
     padding: 8px;
     border: 1px solid #d9e0ee;
     border-radius: 8px;
@@ -154,7 +162,7 @@ body {
     border: 1px solid #d9e0ee;
     border-radius: 8px;
     font-size: 14px;
-    width: 97%;
+    width: 98%;
 }
 
 .sexo-opcoes input {

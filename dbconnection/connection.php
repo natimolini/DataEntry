@@ -1,11 +1,10 @@
 <?php
 try {
-    $dsn = 'oci:dbname=//177.220.133.38:4787/dbteste';
+    $dsn = 'oci:dbname=//177.220.133.38:4787/dbteste;charset=UTF8';
     $username = 'demo';
-    $password = 'aloisk';
+    $password = 'aloisktasy7818';
 
     $conn = new PDO($dsn, $username, $password);
-    echo "Conexão bem-sucedida!";
 } catch (PDOException $e) {
     echo "Erro ao conectar ao Oracle: " . $e->getMessage();
 }
