@@ -3,19 +3,28 @@
 include('../dbconnection/connection.php');
 include('../databasePaciente/selecionarPaciente.php');
 include('../databasePaciente/atualizarPaciente.php');
+include('../databasePaciente/inserirPaciente.php');
 
 date_default_timezone_set('America/Sao_Paulo');
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $resultado = atualizarPaciente($_POST, $conn);
-}
 
 $dadosPaciente = null;
 if (isset($_GET['cpf']) && !empty($_GET['cpf'])) {
     $dadosPaciente = buscarDadosPacientePorCPF($_GET['cpf'], $conn);
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['codigoPaciente']) && !empty($_POST['codigoPaciente'])) {
+        $resultado = atualizarPaciente($_POST, $conn);
+        if ($resultado) {
+            echo "<p>Paciente atualizado com sucesso.</p>";
+        }
+    } else {
+        $resultadoInsercao = inserirPaciente($_POST, $conn);
+        if ($resultadoInsercao) {
+            echo "<p>Paciente inserido com sucesso.</p>";
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -30,7 +39,7 @@ if (isset($_GET['cpf']) && !empty($_GET['cpf'])) {
 </head>
 
 <body>
-    <?php include("header.php") ?>
+    <?php include("header.php") ?> 
     <div class="paciente">
         <h2 class="title" id="togglePaciente">Paciente</h2>
         <div class="conteudo" id="conteudoPaciente">
@@ -69,7 +78,7 @@ if (isset($_GET['cpf']) && !empty($_GET['cpf'])) {
 
             <div class="infoPaciente bloco-pequeno">
                 <p class="titulo-info">Informações</p>
-                <form class="info-container" action="main.php" method="post">
+                <form id="infoPacienteForm" class="info-container" action="main.php" method="post">
                     <input type="hidden" name="codigoPaciente" value="<?= htmlspecialchars($dadosPaciente['CD_PESSOA_FISICA'] ?? '') ?>">
 
                     <label for="cpfpaciente" class="tituloInfo">CPF:</label>
@@ -100,7 +109,7 @@ if (isset($_GET['cpf']) && !empty($_GET['cpf'])) {
                     <input type="text" id="nascPaciente" name="nascPaciente" class="input-info"
                         value="<?= isset($dadosPaciente['DT_NASCIMENTO']) ? date('d/m/Y', strtotime($dadosPaciente['DT_NASCIMENTO'])) : '' ?>" required><br>
 
-                    <button type="submit" class="adicionar">Salvar</button>
+                    <button type="submit" id="salvarBtn" class="adicionar">Salvar</button>
                 </form>
             </div>
         </div>

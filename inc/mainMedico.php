@@ -36,42 +36,6 @@
                     <label for="crm" class="tituloInfo">CRM:</label>
                     <input type="text" id="crm" name="crm" class="input-info" placeholder="CRM-UF 00000" required><br>
 
-                    <label for="estado" class="tituloInfo">Estado:</label>
-                    <select class="input-info" id="estado" name="estado" required onchange="atualizarCidades()">
-                        <option value="">Selecione o estado</option>
-                        <option value="AC">Acre</option>
-                        <option value="AL">Alagoas</option>
-                        <option value="AP">Amapá</option>
-                        <option value="AM">Amazonas</option>
-                        <option value="BA">Bahia</option>
-                        <option value="CE">Ceará</option>
-                        <option value="DF">Distrito Federal</option>
-                        <option value="ES">Espírito Santo</option>
-                        <option value="GO">Goiás</option>
-                        <option value="MA">Maranhão</option>
-                        <option value="MT">Mato Grosso</option>
-                        <option value="MS">Mato Grosso do Sul</option>
-                        <option value="MG">Minas Gerais</option>
-                        <option value="PA">Pará</option>
-                        <option value="PB">Paraíba</option>
-                        <option value="PR">Paraná</option>
-                        <option value="PE">Pernambuco</option>
-                        <option value="PI">Piauí</option>
-                        <option value="RJ">Rio de Janeiro</option>
-                        <option value="RN">Rio Grande do Norte</option>
-                        <option value="RS">Rio Grande do Sul</option>
-                        <option value="RO">Rondônia</option>
-                        <option value="RR">Roraima</option>
-                        <option value="SC">Santa Catarina</option>
-                        <option value="SP">São Paulo</option>
-                        <option value="SE">Sergipe</option>
-                        <option value="TO">Tocantins</option>
-                    </select><br>
-
-                    <label class="tituloInfo" for="cidade">Cidade:</label>
-                    <select class="input-info" id="cidade" name="cidade" required>
-                        <option value="">Selecione a cidade</option>
-                    </select>
                 </form>
             </div>
 

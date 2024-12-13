@@ -16,34 +16,50 @@ function atualizarPaciente($dados, $conn)
         return false;
     }
 
-    $contatoConcatenado = trim($nomeMaePaciente1) . (trim($nomeMaePaciente1) && trim($nomeMaePaciente2) ? ', ' : '') . trim($nomeMaePaciente2);
-
     try {
-        // Atualiza de PESSOA_FISICA
-        $query = "UPDATE PESSOA_FISICA SET 
-                  NM_PESSOA_FISICA = :nome,
-                  DT_NASCIMENTO = TO_DATE(:nascimento, 'YYYY-MM-DD'),
-                  IE_SEXO = :sexo 
-                  WHERE CD_PESSOA_FISICA = :codigo";
+        $conn->beginTransaction();
 
-        $stmt = $conn->prepare($query);
-        $stmt->bindParam(':nome', $nomePaciente);
-        $stmt->bindParam(':nascimento', $nascimento);
-        $stmt->bindParam(':sexo', $sexo);
-        $stmt->bindParam(':codigo', $codigoPaciente, PDO::PARAM_INT);
-        $stmt->execute();
+        $queryPessoa = "UPDATE PESSOA_FISICA SET 
+                        NM_PESSOA_FISICA = :nome,
+                        DT_NASCIMENTO = TO_DATE(:nascimento, 'YYYY-MM-DD'),
+                        IE_SEXO = :sexo
+                        WHERE CD_PESSOA_FISICA = :codigo";
 
-        // Atualiza de COMPL_PESSOA_FISICA
-        $queryContato = "UPDATE COMPL_PESSOA_FISICA SET 
-                         NM_CONTATO = :contato 
-                         WHERE CD_PESSOA_FISICA = :codigo";
-        $stmtContato = $conn->prepare($queryContato);
-        $stmtContato->bindParam(':contato', $contatoConcatenado);
-        $stmtContato->bindParam(':codigo', $codigoPaciente, PDO::PARAM_INT);
-        $stmtContato->execute();
+        $stmtPessoa = $conn->prepare($queryPessoa);
+        $stmtPessoa->bindParam(':nome', $nomePaciente);
+        $stmtPessoa->bindParam(':nascimento', $nascimento);
+        $stmtPessoa->bindParam(':sexo', $sexo);
+        $stmtPessoa->bindParam(':codigo', $codigoPaciente, PDO::PARAM_INT);
+        $stmtPessoa->execute();
 
+        if (trim($nomeMaePaciente1) !== '') {
+            $queryContato1 = "UPDATE COMPL_PESSOA_FISICA SET 
+                              NM_CONTATO = :contato
+                              WHERE CD_PESSOA_FISICA = :codigo 
+                              AND IE_TIPO_COMPLEMENTO = 5";
+
+            $stmtContato1 = $conn->prepare($queryContato1);
+            $stmtContato1->bindParam(':contato', $nomeMaePaciente1);
+            $stmtContato1->bindParam(':codigo', $codigoPaciente, PDO::PARAM_INT);
+            $stmtContato1->execute();
+        }
+
+        if (trim($nomeMaePaciente2) !== '') {
+            $queryContato2 = "UPDATE COMPL_PESSOA_FISICA SET 
+                              NM_CONTATO = :contato
+                              WHERE CD_PESSOA_FISICA = :codigo 
+                              AND IE_TIPO_COMPLEMENTO = 4";
+
+            $stmtContato2 = $conn->prepare($queryContato2);
+            $stmtContato2->bindParam(':contato', $nomeMaePaciente2);
+            $stmtContato2->bindParam(':codigo', $codigoPaciente, PDO::PARAM_INT);
+            $stmtContato2->execute();
+        }
+
+        $conn->commit();
         return true;
     } catch (PDOException $e) {
+        $conn->rollBack();
         echo "<p>Erro ao atualizar paciente: " . $e->getMessage() . "</p>";
         return false;
     }
