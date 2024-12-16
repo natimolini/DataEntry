@@ -39,14 +39,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <?php include("header.php") ?> 
+    <?php include("../inc/header.php") ?>
     <div class="paciente">
         <h2 class="title" id="togglePaciente">Paciente</h2>
         <div class="conteudo" id="conteudoPaciente">
             <div class="localizarPaciente bloco-pequeno">
                 <p class="titulo-loc">Localizar</p>
                 <form class="search-container" action="main.php" method="get">
-                    <input id="searchBar" class="input-padraoB" name="cpf" placeholder="Digite o CPF do paciente: 000.000.000-00">
+                    <input id="searchBar" class="input-padraoB" name="cpf" placeholder="Digite o CPF do paciente">
                     <button class="search-button" type="submit">OK</button>
                 </form>
 
@@ -108,6 +108,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="nascPaciente" class="tituloInfo nascimento">Nascimento:</label>
                     <input type="text" id="nascPaciente" name="nascPaciente" class="input-info"
                         value="<?= isset($dadosPaciente['DT_NASCIMENTO']) ? date('d/m/Y', strtotime($dadosPaciente['DT_NASCIMENTO'])) : '' ?>" required><br>
+
+                    <label for="estadoCivil" class="tituloInfo">Estado Civil:</label>
+                    <select id="estadoCivil" name="estadoCivil" class="input-info" required>
+                        <option value="1" <?= ($dadosPaciente['IE_ESTADO_CIVIL'] ?? '') === '1' ? 'selected' : '' ?>>Solteiro</option>
+                        <option value="2" <?= ($dadosPaciente['IE_ESTADO_CIVIL'] ?? '') === '2' ? 'selected' : '' ?>>Casado</option>
+                        <option value="3" <?= ($dadosPaciente['IE_ESTADO_CIVIL'] ?? '') === '3' ? 'selected' : '' ?>>Divorciado</option>
+                        <option value="4" <?= ($dadosPaciente['IE_ESTADO_CIVIL'] ?? '') === '4' ? 'selected' : '' ?>>Desquitado</option>
+                        <option value="5" <?= ($dadosPaciente['IE_ESTADO_CIVIL'] ?? '') === '5' ? 'selected' : '' ?>>Viúvo</option>
+                        <option value="6" <?= ($dadosPaciente['IE_ESTADO_CIVIL'] ?? '') === '6' ? 'selected' : '' ?>>Separado</option>
+                        <option value="7" <?= ($dadosPaciente['IE_ESTADO_CIVIL'] ?? '') === '7' ? 'selected' : '' ?>>União estável</option>
+                        <option value="9" <?= ($dadosPaciente['IE_ESTADO_CIVIL'] ?? '') === '9' ? 'selected' : '' ?>>Outros</option>
+                    </select><br>
 
                     <button type="submit" id="salvarBtn" class="adicionar">Salvar</button>
                 </form>

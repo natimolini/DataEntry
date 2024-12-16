@@ -22,6 +22,7 @@ function buscarDadosPacientePorCPF($cpf, $conn)
         P.DT_NASCIMENTO,
         TRUNC((MONTHS_BETWEEN(SYSDATE, P.DT_NASCIMENTO)) / 12) AS IDADE,
         MAX(CEP.NM_LOCALIDADE) AS NM_LOCALIDADE,
+        P.IE_ESTADO_CIVIL,
         CASE 
             WHEN P.IE_SEXO = 'M' THEN 'Masculino'
             WHEN P.IE_SEXO = 'F' THEN 'Feminino'
@@ -44,7 +45,8 @@ function buscarDadosPacientePorCPF($cpf, $conn)
             P.NR_CPF,
             P.DT_NASCIMENTO,
             P.NR_CEP_CIDADE_NASC,
-            P.IE_SEXO
+            P.IE_SEXO,
+            P.IE_ESTADO_CIVIL
     ";
 
     try {

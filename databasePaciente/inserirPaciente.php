@@ -7,6 +7,7 @@ function inserirPaciente($dados, $conn)
     $nomeMaePaciente1 = $dados['nomeMaePaciente1'];
     $nomeMaePaciente2 = $dados['nomeMaePaciente2'];
     $sexo = substr($dados['sexo'], 0, 1);
+    $estadoCivil = $dados['estadoCivil'];
     $tipoPessoa = '2';
     $nomeUsuario = 'nataliamolini';
 
@@ -25,25 +26,27 @@ function inserirPaciente($dados, $conn)
         $cdPessoaFisica = $stmtSeq->fetchColumn();
 
         $query = "INSERT INTO 
-                    PESSOA_FISICA (
-                    CD_PESSOA_FISICA, 
-                    NR_CPF, 
-                    NM_PESSOA_FISICA, 
-                    DT_NASCIMENTO, 
-                    IE_SEXO, 
-                    IE_TIPO_PESSOA,
-                    DT_ATUALIZACAO,
-                    NM_USUARIO
-                    )
-                  VALUES 
-                    (:cdPessoaFisica,
-                    :cpf,
-                    :nome,
-                    TO_DATE(:nascimento, 'YYYY-MM-DD'),
-                    :sexo, 
-                    :tipoPessoa, 
-                    SYSDATE,
-                    :nomeUsuario)";
+            PESSOA_FISICA (
+            CD_PESSOA_FISICA, 
+            NR_CPF, 
+            NM_PESSOA_FISICA, 
+            DT_NASCIMENTO, 
+            IE_SEXO, 
+            IE_TIPO_PESSOA,
+            DT_ATUALIZACAO,
+            NM_USUARIO,
+            IE_ESTADO_CIVIL 
+            )
+          VALUES 
+            (:cdPessoaFisica,
+            :cpf,
+            :nome,
+            TO_DATE(:nascimento, 'YYYY-MM-DD'),
+            :sexo, 
+            :tipoPessoa, 
+            SYSDATE,
+            :nomeUsuario,
+            :estadoCivil)";
 
         $stmt = $conn->prepare($query);
         $stmt->bindParam(':cdPessoaFisica', $cdPessoaFisica, PDO::PARAM_INT);
@@ -53,6 +56,7 @@ function inserirPaciente($dados, $conn)
         $stmt->bindParam(':sexo', $sexo, PDO::PARAM_STR);
         $stmt->bindParam(':tipoPessoa', $tipoPessoa, PDO::PARAM_STR);
         $stmt->bindParam(':nomeUsuario', $nomeUsuario, PDO::PARAM_STR);
+        $stmt->bindParam(':estadoCivil', $estadoCivil, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
             $contatos = [

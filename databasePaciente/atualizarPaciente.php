@@ -6,6 +6,7 @@ function atualizarPaciente($dados, $conn)
     $nomePaciente = $dados['nomePaciente'];
     $nomeMaePaciente1 = $dados['nomeMaePaciente1'];
     $nomeMaePaciente2 = $dados['nomeMaePaciente2'];
+    $estadoCivil = $dados['estadoCivil'];
     $sexo = substr($dados['sexo'], 0, 1);
 
     $dataArray = explode('/', $dados['nascPaciente']);
@@ -22,7 +23,8 @@ function atualizarPaciente($dados, $conn)
         $queryPessoa = "UPDATE PESSOA_FISICA SET 
                         NM_PESSOA_FISICA = :nome,
                         DT_NASCIMENTO = TO_DATE(:nascimento, 'YYYY-MM-DD'),
-                        IE_SEXO = :sexo
+                        IE_SEXO = :sexo,
+                        IE_ESTADO_CIVIL = :estadoCivil
                         WHERE CD_PESSOA_FISICA = :codigo";
 
         $stmtPessoa = $conn->prepare($queryPessoa);
@@ -30,6 +32,7 @@ function atualizarPaciente($dados, $conn)
         $stmtPessoa->bindParam(':nascimento', $nascimento);
         $stmtPessoa->bindParam(':sexo', $sexo);
         $stmtPessoa->bindParam(':codigo', $codigoPaciente, PDO::PARAM_INT);
+        $stmtPessoa->bindParam(':estadoCivil', $estadoCivil, PDO::PARAM_INT);
         $stmtPessoa->execute();
 
         if (trim($nomeMaePaciente1) !== '') {
