@@ -96,7 +96,7 @@ body {
 }
 
 .input-padrao {
-    width: 86%;
+    width: 100%;
     padding: 8px;
     border: 1px solid #d9e0ee;
     border-radius: 8px;
@@ -266,4 +266,15 @@ select.input-info {
     background-color: #D9EFFF;
     color: #0b5ed8;
     border: 2px solid #0b5ed8;
+}
+
+.selectMedico {
+    color: black;
+    font-size: 14px;
+    font-family: "Gill Sans", "Segoe UI", Arial, sans-serif;
+    text-decoration: none;
+}
+
+.selectMedico:hover {
+    text-decoration: underline;
 }

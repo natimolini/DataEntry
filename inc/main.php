@@ -13,15 +13,17 @@ if (isset($_GET['cpf']) && !empty($_GET['cpf'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['codigoPaciente']) && !empty($_POST['codigoPaciente'])) {
-        $resultado = atualizarPaciente($_POST, $conn);
-        if ($resultado) {
-            echo "<p>Paciente atualizado com sucesso.</p>";
-        }
-    } else {
-        $resultadoInsercao = inserirPaciente($_POST, $conn);
-        if ($resultadoInsercao) {
-            echo "<p>Paciente inserido com sucesso.</p>";
+    if (isset($_POST['action']) && $_POST['action'] === 'updatePatient') {
+        if (isset($_POST['codigoPaciente']) && !empty($_POST['codigoPaciente'])) {
+            $resultado = atualizarPaciente($_POST, $conn);
+            if ($resultado) {
+                echo "<p>Paciente atualizado com sucesso.</p>";
+            }
+        } else {
+            $resultadoInsercao = inserirPaciente($_POST, $conn);
+            if ($resultadoInsercao) {
+                echo "<p>Paciente inserido com sucesso.</p>";
+            }
         }
     }
 }
@@ -39,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <?php include("../inc/header.php") ?>
+<?php include('header.php');?>
     <div class="paciente">
         <h2 class="title" id="togglePaciente">Paciente</h2>
         <div class="conteudo" id="conteudoPaciente">
@@ -79,16 +81,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="infoPaciente bloco-pequeno">
                 <p class="titulo-info">Informações</p>
                 <form id="infoPacienteForm" class="info-container" action="main.php" method="post">
+                    <input type="hidden" name="action" value="updatePatient">
                     <input type="hidden" name="codigoPaciente" value="<?= htmlspecialchars($dadosPaciente['CD_PESSOA_FISICA'] ?? '') ?>">
+
+                    <label for="nomePaciente" class="tituloInfo">Nome:</label>
+                    <input type="text" id="nomePaciente" name="nomePaciente" class="input-info"
+                        value="<?= htmlspecialchars($dadosPaciente['NM_PESSOA_FISICA'] ?? '') ?>" required><br>
 
                     <label for="cpfpaciente" class="tituloInfo">CPF:</label>
                     <input type="text" id="cpfPaciente" name="cpfpaciente" class="input-info"
                         value="<?= htmlspecialchars($dadosPaciente['NR_CPF'] ?? '') ?>"
                         <?= $dadosPaciente ? 'readonly' : '' ?> required><br>
-
-                    <label for="nomePaciente" class="tituloInfo">Nome:</label>
-                    <input type="text" id="nomePaciente" name="nomePaciente" class="input-info"
-                        value="<?= htmlspecialchars($dadosPaciente['NM_PESSOA_FISICA'] ?? '') ?>" required><br>
 
                     <label for="nomeMaePaciente1" class="tituloInfo">Filiação 1:</label>
                     <input type="text" id="nomeMaePaciente1" name="nomeMaePaciente1" class="input-info"
@@ -105,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <option value="O" <?= ($dadosPaciente['SEXO'] ?? '') === 'Outro' ? 'selected' : '' ?>>Outro</option>
                     </select><br>
 
-                    <label for="nascPaciente" class="tituloInfo nascimento">Nascimento:</label>
+                    <label for="nascPaciente" class="tituloInfo nascimento">Data de Nascimento:</label>
                     <input type="text" id="nascPaciente" name="nascPaciente" class="input-info"
                         value="<?= isset($dadosPaciente['DT_NASCIMENTO']) ? date('d/m/Y', strtotime($dadosPaciente['DT_NASCIMENTO'])) : '' ?>" required><br>
 
